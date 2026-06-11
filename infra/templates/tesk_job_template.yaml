@@ -1,0 +1,17 @@
+# A conceptual example of how TESK maps a TES API request to a native Kubernetes Job
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: tesk-fastvep-annotation-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: fastvep-execution-container
+        image: fastvep:latest
+        command: ["fastVEP", "--vcf", "input.vcf", "--output", "clinical_annotated.vcf"]
+        resources:
+          limits:
+            cpu: "8"
+            memory: "16Gi"
+      restartPolicy: Never

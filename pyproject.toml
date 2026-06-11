@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "gene"
+version = "0.1.0"
+description = "GA4GH-compliant federated genomics pipeline toolkit"
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-cov",
+    "pyyaml",
+]
+
+# ---------------------------------------------------------------------------
+# Pytest
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths   = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+markers = [
+    "integration: tests that require a live external service (deselect with -m 'not integration')",
+]
+
+# Show short tracebacks; skip integration tests by default
+addopts = "-v --tb=short -m 'not integration'"
+
+# ---------------------------------------------------------------------------
+# Coverage
+# ---------------------------------------------------------------------------
+[tool.coverage.run]
+source = ["auth", "drs", "variants", "storage", "server", "single_cell"]
+omit   = ["tests/*", "pipelines/*", "infra/*", "rust/*", "visualization/*"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under   = 80
