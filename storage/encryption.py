@@ -1,11 +1,16 @@
-import crypt4gh.lib
+from __future__ import annotations
 import crypt4gh.keys
+import crypt4gh.lib
 
-# Generate or load secure Crypt4GH keys
-private_key = crypt4gh.keys.get_private_key("node_secret.sec", callback=lambda: 'password')
-public_key = crypt4gh.keys.get_public_key("node_public.pub")
-keys = [(0, private_key, public_key)]
+def load_keys(private_key_path: str, public_key_path: str, password: str = "") -> list:
+    private_key = crypt4gh.keys.get_private_key(private_key_path, callback=lambda: password)
+    public_key  = crypt4gh.keys.get_public_key(public_key_path)
+    return [(0, private_key, public_key)]
 
-# Crypt4GH encrypts the raw FASTQ or VCF data before it is ever sent to the TES environment
-with open("patient_data.fastq", "rb") as infile, open("patient_data.fastq.c4gh", "wb") as outfile:
-    crypt4gh.lib.encrypt(keys, infile, outfile)
+def encrypt_file(keys: list, input_path: str, output_path: str) -> None:
+    with open(input_path, "rb") as infile, open(output_path, "wb") as outfile:
+        crypt4gh.lib.encrypt(keys, infile, outfile)
+
+def decrypt_file(keys: list, input_path: str, output_path: str) -> None:
+    with open(input_path, "rb") as infile, open(output_path, "wb") as outfile:
+        crypt4gh.lib.decrypt(keys, infile, outfile)

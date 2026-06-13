@@ -1,15 +1,11 @@
-import polars as pl
+from __future__ import annotations
 import polars_bio as pb
 
-# Read variant and gene boundary data natively into Arrow-backed DataFrames
-# The coordinate system defaults to 1-based closed coordinates
-df_variants = pb.read_vcf("cohort_variants.vcf")
-df_genes = pb.read_bed("target_genes.bed")
+def load_variants_and_genes(vcf_path: str, bed_path: str):
+    return pb.read_vcf(vcf_path), pb.read_bed(bed_path)
 
-# Execute an out-of-core overlap query across millions of intervals
-overlapping_variants = pb.overlap(df_variants, df_genes)
+def find_overlapping_variants(df_variants, df_genes):
+    return pb.overlap(df_variants, df_genes)
 
-# You can also run nearest neighbor distance queries just as efficiently
-nearest_genes = pb.nearest(df_variants, df_genes)
-
-print(overlapping_variants.head())
+def find_nearest_genes(df_variants, df_genes):
+    return pb.nearest(df_variants, df_genes)

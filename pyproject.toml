@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.backends.legacy:build"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "gene"
@@ -15,9 +15,10 @@ dev = [
     "pyyaml",
 ]
 
-# ---------------------------------------------------------------------------
-# Pytest
-# ---------------------------------------------------------------------------
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["auth*", "drs*", "variants*", "storage*", "server*", "single_cell*"]
+
 [tool.pytest.ini_options]
 testpaths   = ["tests"]
 python_files = ["test_*.py"]
@@ -28,12 +29,8 @@ markers = [
     "integration: tests that require a live external service (deselect with -m 'not integration')",
 ]
 
-# Show short tracebacks; skip integration tests by default
 addopts = "-v --tb=short -m 'not integration'"
 
-# ---------------------------------------------------------------------------
-# Coverage
-# ---------------------------------------------------------------------------
 [tool.coverage.run]
 source = ["auth", "drs", "variants", "storage", "server", "single_cell"]
 omit   = ["tests/*", "pipelines/*", "infra/*", "rust/*", "visualization/*"]
@@ -41,3 +38,4 @@ omit   = ["tests/*", "pipelines/*", "infra/*", "rust/*", "visualization/*"]
 [tool.coverage.report]
 show_missing = true
 fail_under   = 80
+

@@ -1,8 +1,12 @@
+from __future__ import annotations
 import tes_client
-# Initialize the client with your GA4GH Passport JWT
-client = tes_client.Client(
-    url="https://path.to.biobank/ga4gh/drs/v1/",
-    jwt="YOUR_SECURE_JWT_TOKEN"
-)
-# Access the data object securely
-response = client.GetObject("a001")
+
+def create_client(url: str, jwt: str) -> tes_client.Client:
+    if not url:
+        raise ValueError("DRS endpoint URL must not be empty")
+    if not jwt:
+        raise ValueError("JWT token must not be empty")
+    return tes_client.Client(url=url, jwt=jwt)
+
+def get_object(client, object_id: str):
+    return client.GetObject(object_id)

@@ -1,20 +1,16 @@
+from __future__ import annotations
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 import scanpy as sc
 
-# Load an exabyte-scale trained biological foundation model
-# These Transformer architectures replace traditional graph clustering
-tokenizer = AutoTokenizer.from_pretrained("biological-transformer-scRNA")
-model = AutoModelForMaskedLM.from_pretrained("biological-transformer-scRNA").cuda()
+def load_model(model_name: str, device: str = "cuda"):
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    model = AutoModelForMaskedLM.from_pretrained(model_name).to(device)
+    return tokenizer, model
 
-# Load a massive single-cell matrix and extract expression profiles
-adata = sc.read_h5ad("million_cells_matrix.h5ad", backed='r')
-
-# Feed cellular "sentences" into the Transformer for highly accurate,
-# high-dimensional latent space embeddings
-inputs = tokenizer(adata.obs['cell_sequences'].tolist(), return_tensors="pt").to("cuda")
-with torch.no_grad():
-    embeddings = model(**inputs).last_hidden_state
-
-# These embeddings natively capture complex trajectory data without 
-# forcing cells into disconnected, rigid clusters
+def embed_cells(h5ad_path: str, tokenizer, model, device: str = "cuda"):
+    adata = sc.read_h5ad(h5ad_path, backed="r")
+    inputs = tokenizer(adata.obs["cell_sequences"].tolist(), return_tensors="pt").to(device)
+    with torch.no_grad():
+        embeddings = model(**inputs).last_hidden_state
+    return embeddings
